@@ -7,3 +7,4 @@ openai
 pypdf
 python-dotenv
 pdfkit
+newspaper3k
