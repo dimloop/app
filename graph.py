@@ -9,6 +9,11 @@ def loop_or_exit(state: State) -> str:
     else:
         return "answer"
 
+def loop_or_exit2(state: State) -> str:
+    if state.get("evaluation_complete") or state.get("iteration_count")>= global_var.ITERATIONS:
+        return "save"
+    else:
+        return "answer"
 
 def build_graph():
     builder = StateGraph(State)
@@ -30,7 +35,7 @@ def build_graph():
     builder.add_edge("ask", "answer")
     builder.add_edge("answer", "evaluate")
     builder.add_edge("evaluate", "revise")
-    builder.add_conditional_edges("revise", loop_or_exit, ["answer", "save"])
+    builder.add_conditional_edges("revise", loop_or_exit2, ["answer", "save"])
     builder.add_edge("save", END)
    
     return builder.compile()
