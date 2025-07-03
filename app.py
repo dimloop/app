@@ -8,8 +8,8 @@ from article_extract import extract_article_as_json
 import global_var
 
 
-st.set_page_config(page_title="Εξαγωγέας κύριων Σημείων απο Άρθρα", page_icon="🧠")
-st.title("📰 Εξαγωγέας κύριων Σημείων απο Αρθρα")
+st.set_page_config(page_title="Εξαγωγέας Κύριων Σημείων απο Άρθρα", page_icon="🧠")
+st.title("📰 Εξαγωγέας Κύριων Σημείων απο Αρθρα")
 
 
 
@@ -33,6 +33,15 @@ with st.sidebar:
     model = st.radio("Επιλογή μεθοδολογίας:", ["Μονοκομβικό μοντέλο"])
     #single = single_model.startswith("One")
 
+    provider = st.radio("Επιλογή μοντέλου:",
+                        ["μοντέλο 1", "μοντέλο 2", "μοντέλο 3"],
+                        horizontal=True)
+                        #"OpenAI", "Claude", "Gemini"
+    
+    models_dict = {"μοντέλο 1":"OpenAI", "μοντέλο 2":"Claude", "μοντέλο 3":"Gemini"}
+
+    provider = models_dict[provider]
+
     show_explanations = st.checkbox("🔍 Προβολή επεξηγήσεων όρων", value=True)
 
     st.markdown("---")
@@ -40,15 +49,11 @@ with st.sidebar:
     iterations = st.slider("🔁 Μέγιστες επαναλήψεις", 1, 10, global_var.ITERATIONS)
     global_var.ITERATIONS = iterations
     # ————— LLM provider + model —————
-    provider = st.radio("Επιλογή μοντέλου:",
-                        ["μοντέλο 1", "μοντέλο 2", "μοντέλο 3"],
-                        horizontal=True)
-                        #"OpenAI", "Claude", "Gemini"
-    
-    models_dict = {"μοντέλο 1":"OpenAI", "μοντέλο 2":"Claude", "μοντέλο 3":"Gemini"}
+   
     custom_model = st.text_input("🔤 (Προαιρετικά) όνομα μοντέλου",
                                  placeholder="Leave blank for default")
-    provider = models_dict[provider]
+    
+   # print(provider.lower)
     temperature = st.slider("🌡️ Θερμοκρασία", 0.0, 1.0, 0.2)
 
     apply_settings = st.button("✔ Επιβεβαίωση ρυθμίσεων")
@@ -75,8 +80,8 @@ if apply_settings:
             model=custom_model or None,
             temperature=temperature,
         )
-        st.toast(f"✅ Χρησιμοποιείται τώρα {provider}"
-                 + (f' / “{custom_model}”' if custom_model else " (προεπιλογή)"))
+        #st.toast(f"✅ Χρησιμοποιείται τώρα {provider}"
+        #         + (f' / “{custom_model}”' if custom_model else " (προεπιλογή)"))
     except Exception as e:
         st.error(f"❌ Αποτυχία ρύθμισης LLM: {e}")
 
