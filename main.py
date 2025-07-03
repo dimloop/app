@@ -6,7 +6,7 @@ from langgraph.errors import GraphRecursionError
 import global_var
 
 
-def summarize_article_json(article: dict = None, json_path: str = None, output_path: str = None, model: list[str] = "1-node") -> None:
+def summarize_article_json(article: dict = None, json_path: str = None, output_path: str = None, model: list[str] = "Μονοκομβικό μοντέλο") -> None:
     #print(global_var.ITERATIONS)
     if article is None:
         if json_path is None:
@@ -28,7 +28,7 @@ def summarize_article_json(article: dict = None, json_path: str = None, output_p
         "output_path": output_path,
     }
 
-    if model == "1-node":
+    if model == "Μονοκομβικό μοντέλο":
         graph = build_graph_single()
         # Image plot #
         #image_data = graph.get_graph().draw_mermaid_png()
