@@ -8,8 +8,8 @@ from article_extract import extract_article_as_json
 import global_var
 
 
-st.set_page_config(page_title="Greek Article Summarizer", page_icon="🧠")
-st.title("📰 Greek Article Summarizer")
+st.set_page_config(page_title="Εξαγωγέας κύριων Σημείων απο Άρθρα", page_icon="🧠")
+st.title("📰 Εξαγωγέας κύριων Σημείων απο Αρθρα")
 
 
 
@@ -24,27 +24,32 @@ with st.sidebar:
     st.header("⚙️ Ρυθμίσεις")
 
     # ————— Pipeline parameters —————
-    iterations = st.slider("🔁 Μέγιστες επαναλήψεις", 1, 10, global_var.ITERATIONS)
-    global_var.ITERATIONS = iterations
+    
 
-    bold_words = st.radio("Συμπερίληψη bold από άρθρο:", ["Yes", "No"])
-    bold = bold_words.startswith("Yes")
+    bold_words = st.radio("Συμπερίληψη έντονης γραφής από άρθρο:", ["Ναι", "Οχι"])
+    bold = bold_words.startswith("Ναι")
 
 
-    model = st.radio("Επιλογή μοντέλου περίληψης:", ["1-node", "7-node", "8-node"])
+    model = st.radio("Επιλογή μεθοδολογίας:", ["Μονοκομβικό μοντέλο"])
     #single = single_model.startswith("One")
 
     show_explanations = st.checkbox("🔍 Προβολή επεξηγήσεων όρων", value=True)
 
     st.markdown("---")
 
+    iterations = st.slider("🔁 Μέγιστες επαναλήψεις", 1, 10, global_var.ITERATIONS)
+    global_var.ITERATIONS = iterations
     # ————— LLM provider + model —————
-    provider = st.radio("LLM provider:",
-                        ["OpenAI", "Claude", "Gemini"],
+    provider = st.radio("Επιλογή μοντέλου:",
+                        ["μοντέλο 1", "μοντέλο 2", "μοντέλο 3"],
                         horizontal=True)
+                        #"OpenAI", "Claude", "Gemini"
+    
+    models_dict = {"μοντέλο 1":"OpenAI", "μοντέλο 2":"Claude", "μοντέλο 3":"Gemini"}
     custom_model = st.text_input("🔤 (Προαιρετικά) όνομα μοντέλου",
                                  placeholder="Leave blank for default")
-    temperature = st.slider("🌡️ Temperature", 0.0, 1.0, 0.2)
+    provider = models_dict[provider]
+    temperature = st.slider("🌡️ Θερμοκρασία", 0.0, 1.0, 0.2)
 
     apply_settings = st.button("✔ Επιβεβαίωση ρυθμίσεων")
 
