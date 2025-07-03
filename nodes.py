@@ -1,8 +1,9 @@
 from langchain_core.messages import HumanMessage
-from config import llm
 from summary_state import State
 import os
-
+import config            
+from langchain_core.messages import HumanMessage
+from summary_state import State
 
 def format_article_text(state: State) -> dict:
     a = state["article"]
@@ -24,18 +25,23 @@ def format_article_text(state: State) -> dict:
 
 def explain_terms(state: State) -> dict:
     prompt = f"""
-Εντοπίζεις και επεξηγείς δύσκολες ή τεχνικές λέξεις/όρους που συναντώνται στο παρακάτω άρθρο, ώστε να είναι πιο κατανοητό για ένα ευρύ, μη εξειδικευμένο κοινό.
-
+Ενεργείς ως ειδικός στη γλωσσική απλοποίηση και κατανόηση όρων σε δημόσια και δημοσιογραφικά κείμενα. Ο ρόλος σου είναι να εντοπίσεις και να επεξηγήσεις δύσκολες, τεχνικές ή ασυνήθιστες λέξεις και φράσεις από το παρακάτω ελληνικό άρθρο, ώστε να γίνει πιο κατανοητό σε ένα ευρύ, μη εξειδικευμένο κοινό.
+ 
 Οδηγίες:
-- Αναγνώρισε όρους που μπορεί να είναι δυσνόητοι (π.χ. νομικοί, οικονομικοί, θεσμικοί).
-- Για κάθε όρο, γράψε μια σύντομη επεξήγηση (1–2 προτάσεις) σε απλή γλώσσα.
-- Απόφυγε την επανάληψη, μην εξηγείς προφανείς λέξεις.
-- Απόφυγε αυθαίρετες ερμηνείες ή επιπλέον πληροφορίες που δεν βασίζονται στο άρθρο.
+- Εντόπισε λέξεις ή φράσεις που είναι πιθανό να **μην κατανοούνται εύκολα** από το γενικό κοινό. Αυτές μπορεί να είναι:
+  - Τεχνικοί, νομικοί, οικονομικοί, διοικητικοί ή θεσμικοί όροι.
+  - Όροι με ειδική σημασία στο πλαίσιο του άρθρου.
+  - Όχι συχνά χρησιμοποιούμενες ή λόγιες λέξεις.
+- Για κάθε λέξη ή φράση, δώσε **σύντομη επεξήγηση** σε απλή, σαφή γλώσσα (1–2 προτάσεις).
+- Αν στο άρθρο υπάρχουν λέξεις ή φράσεις με **έντονη γραφή**, εξέτασέ τες κατά προτεραιότητα.
+- Μην εξηγείς λέξεις που είναι αυτονόητες ή καθημερινές.
+- **Μην προσθέτεις πληροφορίες** που δεν προκύπτουν ή δεν υπονοούνται άμεσα από το άρθρο.
+- Απόφυγε τις επαναλήψεις όρων ή παρόμοιων επεξηγήσεων.
 
 Άρθρο:
 {state["article_text"]}
 """
-    res = llm.invoke([HumanMessage(content=prompt)])
+    res = config.llm.invoke([HumanMessage(content=prompt)])
     return {"explanations": res.content}
 
 
@@ -56,8 +62,10 @@ def generate_summary(state: State) -> dict:
 
 {state["article_text"]}
 """
-    res = llm.invoke([HumanMessage(content=prompt)])
-    return {"summary": res.content}
+
+    res = config.llm.invoke([HumanMessage(content=prompt)])
+    return {"summary": res.content,
+    "summary_1": res.content}
 
 
 def generate_questions(state: State) -> dict:
@@ -75,7 +83,7 @@ def generate_questions(state: State) -> dict:
 
 {state["article_text"]}
 """
-    res = llm.invoke([HumanMessage(content=prompt)])
+    res = config.llm.invoke([HumanMessage(content=prompt)])
     return {"questions": res.content}
 
 
@@ -95,7 +103,7 @@ def answer_questions(state: State) -> dict:
 Ερωτήσεις:
 {state['questions']}
 """
-    res = llm.invoke([HumanMessage(content=prompt)])
+    res = config.llm.invoke([HumanMessage(content=prompt)])
     return {"answers": res.content}
 
 
@@ -137,7 +145,7 @@ def evaluate_answers(state: State) -> dict:
 Απαντήσεις:
 {state['answers']}
 """
-    res = llm.invoke([HumanMessage(content=prompt)])
+    res = config.llm.invoke([HumanMessage(content=prompt)])
     evaluation_text = res.content
     success_phrases = ["δεν υπάρχουν προβλήματα", "όλα είναι σωστά", "η περίληψη είναι επαρκής"]
     should_continue = not any(p in evaluation_text.lower() for p in success_phrases)
@@ -182,27 +190,42 @@ def improve_summary(state: State) -> dict:
 Σχόλια:
 {state['feedback']}
 """
-    res = llm.invoke([HumanMessage(content=prompt)])
+    res = config.llm.invoke([HumanMessage(content=prompt)])
     #print(res.content)
-    return {"summary": res.content}
+    return {"summary": res.content,
+    "summary_7": res.content}
 
 
 
 def compare_summaries(state: State) -> dict:
     prompt = f"""
-Εντοπίζεις και επεξηγείς δύσκολες ή τεχνικές λέξεις/όρους που συναντώνται στο παρακάτω άρθρο, ώστε να είναι πιο κατανοητό για ένα ευρύ, μη εξειδικευμένο κοινό.
 
-Οδηγίες:
-- Αναγνώρισε όρους που μπορεί να είναι δυσνόητοι (π.χ. νομικοί, οικονομικοί, θεσμικοί).
-- Για κάθε όρο, γράψε μια σύντομη επεξήγηση (1–2 προτάσεις) σε απλή γλώσσα.
-- Απόφυγε την επανάληψη, μην εξηγείς προφανείς λέξεις.
-- Απόφυγε αυθαίρετες ερμηνείες ή επιπλέον πληροφορίες που δεν βασίζονται στο άρθρο.
+Ενεργείς ως ειδικός στη σύνοψη και επεξεργασία πληροφοριών. Ο ρόλος σου είναι να συνθέσεις την τελική, συμπυκνωμένη περίληψη ενός ελληνικού άρθρου σε μορφή bullets, βασισμένος στα αποτελέσματα των λειτουργιών `generate_summary` και `improve_summary`.
+
+Στόχος: Να συγχωνεύσεις και να εξισορροπήσεις τις δύο περιλήψεις, ώστε να προκύψει η πιο σαφής, πλήρης και ουσιαστική αποτύπωση των βασικών σημείων του άρθρου.
+
+### Οδηγίες:
+- Δημιούργησε έως **3 bullets**, συνολικού μήκους **50–200 λέξεων**.
+- Κάθε bullet να μεταφέρει **μία βασική ιδέα, επιχείρημα ή γεγονός** του άρθρου.
+- **Συνδύασε**, **αφαίρεσε επαναλήψεις**, και **αναδιατύπωσε** όπου χρειάζεται για μεγαλύτερη καθαρότητα και συμπύκνωση.
+- Χρησιμοποίησε **ουδέτερο ή επίσημο ύφος**, **σαφή σύνταξη** και **άμεση γλώσσα**.
+- Απόφυγε **γενικότητες**, **πλεονασμούς** ή **μη τεκμηριωμένες πληροφορίες**.
+- Η τελική μορφή πρέπει να είναι **έτοιμη για δημοσίευση**, υψηλής ποιότητας και να αποτυπώνει με ακρίβεια το περιεχόμενο του αρχικού άρθρου.
+
+Μην προσθέτεις νέα δεδομένα. Εστίασε αποκλειστικά σε όσα προκύπτουν από τις δύο περιλήψεις.
 
 Άρθρο:
 {state["article_text"]}
+
+📄 Πρώτη Περίληψη (από `generate_summary`):
+{state["summary_1"]}
+
+📄 Δεύτερη Περίληψη (από `improve_summary`):
+{state["summary_7"]}
 """
-    res = llm.invoke([HumanMessage(content=prompt)])
-    return {"explanations": res.content}
+
+    res = config.llm.invoke([HumanMessage(content=prompt)])
+    return {"summary": res.content}
 
 
 
