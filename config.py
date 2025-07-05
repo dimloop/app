@@ -11,6 +11,7 @@ def get_llm(
     provider: str = "openai",
     model: str | None = None,
     temperature: float = 0.2,
+    keys: dict,
 ):
     provider = provider.lower()
 
@@ -18,21 +19,21 @@ def get_llm(
         return ChatOpenAI(
             model=model or "gpt-4o",
             temperature=temperature,
-            api_key=config.openai_api_key,
+            api_key=keys["OPENAI_API_KEY"],
         )
 
     if provider == "claude":
         return ChatAnthropic(
             model=model or "claude-3-5-sonnet-latest",
             temperature=temperature,
-            api_key=config.anthropic_api_key,
+            api_key=keys["ANTHROPIC_API_KEY"],
         )
 
     if provider == "gemini":
         return ChatGoogleGenerativeAI(
             model=model or "gemini-1.5-pro",
             temperature=temperature,
-            google_api_key=config.google_api_key,
+            google_api_key=keys["GOOGLE_API_KEY"],
         )
 
     raise ValueError(f"Unknown provider: {provider}")
