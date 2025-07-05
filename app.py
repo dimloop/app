@@ -85,7 +85,7 @@ if apply_settings:
             provider=provider.lower(),
             model=custom_model or None,
             temperature=temperature,
-            keys,
+            keys=keys,
         )
         #st.toast(f"✅ Χρησιμοποιείται τώρα {provider}"
         #         + (f' / “{custom_model}”' if custom_model else " (προεπιλογή)"))
