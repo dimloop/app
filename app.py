@@ -2,12 +2,17 @@
 import os
 import json
 import streamlit as st
-import streamlit as st
    
 
 from main import summarize_article_json
 from article_extract import extract_article_as_json
 import global_var
+
+
+# Set environment variables using Streamlit secrets
+os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
+os.environ["ANTHROPIC_API_KEY"] = st.secrets["ANTHROPIC_API_KEY"]
+os.environ["GOOGLE_API_KEY"] = st.secrets["GOOGLE_API_KEY"]
 
 
 st.set_page_config(page_title="Εξαγωγέας Κύριων Σημείων απο Άρθρα", page_icon="🧠")
@@ -77,7 +82,7 @@ if apply_settings:
     # 1️⃣ Swap the active LLM for the whole app  -----------------------
     try:
         import config               # local import to avoid circular refs
-        keys = {"OPENAI_API_KEY": st.secrets["OPENAI_API_KEY"], "ANTHROPIC_API_KEY": st.secrets["ANTHROPIC_API_KEY"],"GOOGLE_API_KEY" : st.secrets["GOOGLE_API_KEY"]}
+        #keys = {"OPENAI_API_KEY": st.secrets["OPENAI_API_KEY"], "ANTHROPIC_API_KEY": st.secrets["ANTHROPIC_API_KEY"],"GOOGLE_API_KEY" : st.secrets["GOOGLE_API_KEY"]}
         #config.openai_api_key = st.secrets["OPENAI_API_KEY"]
         #config.anthropic_api_key = st.secrets["ANTHROPIC_API_KEY"]
         #config.google_api_key  = st.secrets["GOOGLE_API_KEY"]
@@ -85,7 +90,6 @@ if apply_settings:
             provider=provider.lower(),
             model=custom_model or None,
             temperature=temperature,
-            keys=keys,
         )
         #st.toast(f"✅ Χρησιμοποιείται τώρα {provider}"
         #         + (f' / “{custom_model}”' if custom_model else " (προεπιλογή)"))
