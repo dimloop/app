@@ -6,6 +6,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 
 load_dotenv()
 
+
 def get_llm(
     provider: str = "openai",
     model: str | None = None,
@@ -17,21 +18,21 @@ def get_llm(
         return ChatOpenAI(
             model=model or "gpt-4o",
             temperature=temperature,
-            api_key=os.getenv("OPENAI_API_KEY"),
+            api_key=config.openai_api_key,
         )
 
     if provider == "claude":
         return ChatAnthropic(
             model=model or "claude-3-5-sonnet-latest",
             temperature=temperature,
-            api_key=os.getenv("ANTHROPIC_API_KEY"),
+            api_key=config.anthropic_api_key,
         )
 
     if provider == "gemini":
         return ChatGoogleGenerativeAI(
             model=model or "gemini-1.5-pro",
             temperature=temperature,
-            google_api_key=os.getenv("GOOGLE_API_KEY"),
+            google_api_key=config.google_api_key,
         )
 
     raise ValueError(f"Unknown provider: {provider}")
