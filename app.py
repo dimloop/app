@@ -77,13 +77,15 @@ if apply_settings:
     # 1️⃣ Swap the active LLM for the whole app  -----------------------
     try:
         import config               # local import to avoid circular refs
-        config.openai_api_key = st.secrets["OPENAI_API_KEY"]
-        config.anthropic_api_key = st.secrets["ANTHROPIC_API_KEY"]
-        config.google_api_key  = st.secrets["GOOGLE_API_KEY"]
+        keys = {"OPENAI_API_KEY": st.secrets["OPENAI_API_KEY"], "ANTHROPIC_API_KEY": st.secrets["ANTHROPIC_API_KEY"],"GOOGLE_API_KEY" : st.secrets["GOOGLE_API_KEY"]}
+        #config.openai_api_key = st.secrets["OPENAI_API_KEY"]
+        #config.anthropic_api_key = st.secrets["ANTHROPIC_API_KEY"]
+        #config.google_api_key  = st.secrets["GOOGLE_API_KEY"]
         config.llm = config.get_llm(
             provider=provider.lower(),
             model=custom_model or None,
             temperature=temperature,
+            keys,
         )
         #st.toast(f"✅ Χρησιμοποιείται τώρα {provider}"
         #         + (f' / “{custom_model}”' if custom_model else " (προεπιλογή)"))
