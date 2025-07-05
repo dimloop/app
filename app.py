@@ -2,6 +2,8 @@
 import os
 import json
 import streamlit as st
+import streamlit as st
+   
 
 from main import summarize_article_json
 from article_extract import extract_article_as_json
@@ -75,6 +77,9 @@ if apply_settings:
     # 1️⃣ Swap the active LLM for the whole app  -----------------------
     try:
         import config               # local import to avoid circular refs
+        config.openai_api_key = st.secrets["OPENAI_API_KEY"]
+        config.anthropic_api_key = st.secrets["ANTHROPIC_API_KEY"]
+        config.google_api_key  = st.secrets["GOOGLE_API_KEY"]
         config.llm = config.get_llm(
             provider=provider.lower(),
             model=custom_model or None,
