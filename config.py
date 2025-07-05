@@ -11,7 +11,7 @@ def get_llm(
     provider: str = "openai",
     model: str | None = None,
     temperature: float = 0.2,
-    keys: dict,
+    keys: dict = None,
 ):
     provider = provider.lower()
 
